@@ -1,0 +1,14 @@
+{
+  "name": "trading-risk",
+  "label": "Risk",
+  "description": "Read-only trading risk dashboard: bots, venues, authority map, execution health, and stale-state awareness.",
+  "icon": "ShieldAlert",
+  "version": "0.1.0",
+  "tab": {
+    "path": "/risk",
+    "position": "after:sessions"
+  },
+  "entry": "dist/index.js",
+  "css": "dist/style.css",
+  "api": "plugin_api.py"
+}
