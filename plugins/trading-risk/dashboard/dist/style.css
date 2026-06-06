@@ -104,6 +104,82 @@
   min-height: 116px;
 }
 
+.tr-simple-guide {
+  border-color: rgba(34, 211, 238, 0.34);
+}
+
+.tr-guide-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+  color: #bfdbfe;
+  font-size: 13px;
+}
+
+.tr-guide-steps > div {
+  border: 1px solid rgba(59, 130, 246, 0.16);
+  background: rgba(2, 6, 23, 0.32);
+  padding: 10px;
+}
+
+.tr-simple-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.tr-simple-card {
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  background: rgba(15, 23, 42, 0.58);
+  padding: 14px;
+}
+
+.tr-simple-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.tr-simple-name {
+  color: #f8fafc;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.tr-simple-strategy {
+  margin-top: 4px;
+  color: #93c5fd;
+  font-size: 12px;
+}
+
+.tr-simple-pnl {
+  margin: 12px 0;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.tr-pnl-win { color: #22c55e; }
+.tr-pnl-loss { color: #ef4444; }
+.tr-pnl-unknown { color: #f59e0b; font-size: 17px; }
+
+.tr-simple-line {
+  margin-top: 7px;
+  color: #bfdbfe;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.tr-simple-line b {
+  color: #e0f2fe;
+}
+
+.tr-simple-action {
+  color: #f8fafc;
+}
+
 .tr-metric-label,
 .tr-metric-hint,
 .tr-muted,

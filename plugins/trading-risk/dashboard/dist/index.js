@@ -52,6 +52,57 @@
     );
   }
 
+  function SimpleBotCard({ bot }) {
+    const d = bot.details || {};
+    const legs = d.current_positions || [];
+    const pnl = simplePnl(bot);
+    const hold = simpleHoldings(legs, bot);
+    const action = simpleAction(bot);
+    return h("div", { className: "tr-simple-card" },
+      h("div", { className: "tr-simple-head" },
+        h("div", null,
+          h("div", { className: "tr-simple-name" }, bot.name || "Strategy"),
+          h("div", { className: "tr-simple-strategy" }, shortStrategy(bot))
+        ),
+        label(action.badge, action.state)
+      ),
+      h("div", { className: "tr-simple-pnl " + pnl.cls }, pnl.text),
+      h("div", { className: "tr-simple-line" }, h("b", null, "持仓："), hold),
+      h("div", { className: "tr-simple-line" }, h("b", null, "风险："), "仓位匹配 " + boolText(bot.position_match) + " · 止损 " + boolText(bot.stop_coverage)),
+      h("div", { className: "tr-simple-line tr-simple-action" }, h("b", null, "现在要不要管："), action.text)
+    );
+  }
+
+  function shortStrategy(bot) {
+    const name = bot.name || "";
+    if (name.includes("XS-Momo")) return "多空动量篮子 / Lighter";
+    if (name.includes("KPool")) return "跟随 KPool leader / Lighter";
+    if (name.includes("Bear Claw")) return "Breakout20 risk-off 空头保护仓 / Pacifica";
+    if (name.includes("Aetna")) return "Breakout20 risk-off 三腿空头 / Pacifica";
+    return bot.strategy || "strategy";
+  }
+
+  function simplePnl(bot) {
+    const upnl = Number(bot.pnl_unrealized_usd);
+    if (Number.isFinite(upnl)) return { text: (upnl >= 0 ? "盈利 +$" : "亏损 -$") + Math.abs(upnl).toFixed(2), cls: upnl >= 0 ? "tr-pnl-win" : "tr-pnl-loss" };
+    const day = Number(bot.pnl_daily_pct);
+    if (Number.isFinite(day)) return { text: "今日 " + (day >= 0 ? "+" : "") + day.toFixed(2) + "%", cls: day >= 0 ? "tr-pnl-win" : "tr-pnl-loss" };
+    return { text: "PnL 未接入，只显示仓位/止损", cls: "tr-pnl-unknown" };
+  }
+
+  function simpleHoldings(legs, bot) {
+    if (!legs.length) return bot.positions_count ? bot.positions_count + " 条仓位（暂无逐腿明细）" : "无/未知";
+    const shown = legs.slice(0, 5).map(function (x) { return (x.symbol || "?") + " " + (x.side || "?"); }).join("，");
+    return shown + (legs.length > 5 ? "，另 " + (legs.length - 5) + " 条" : "");
+  }
+
+  function simpleAction(bot) {
+    if (bot.state !== "NORMAL") return { badge: "CHECK", state: "CAUTION", text: "需要看，状态不是 NORMAL。" };
+    if (bot.position_match === false) return { badge: "CHECK", state: "CAUTION", text: "需要看，仓位和目标不匹配。" };
+    if (bot.stop_coverage === false) return { badge: "CHECK", state: "CAUTION", text: "需要看，止损覆盖缺失。" };
+    return { badge: "OK", state: "NORMAL", text: "不用管，继续观察。" };
+  }
+
   function BotRow({ bot }) {
     const d = bot.details || {};
     const legs = d.current_positions || [];
@@ -252,6 +303,16 @@
           h("span", null, "refresh: 30s"),
           h("span", null, data.generated_at ? "updated " + relative(data.generated_at) : "")
         )
+      ),
+
+      h(Card, { className: "tr-simple-guide" },
+        h(SectionTitle, { title: "先看这 4 张策略卡 / Simple View", subtitle: "只回答三个问题：持什么？赚还是亏？现在要不要管？" }),
+        h("div", { className: "tr-guide-steps" },
+          h("div", null, "1. 看每张卡的 盈利/亏损"),
+          h("div", null, "2. 看 持仓：LONG=做多，SHORT=做空"),
+          h("div", null, "3. 看 现在要不要管：OK 就不用动，CHECK 才往下看细节")
+        ),
+        h("div", { className: "tr-simple-grid" }, bots.map((bot, i) => h(SimpleBotCard, { bot: bot, key: bot.name || i })))
       ),
 
       h("div", { className: "tr-metrics-grid" },
