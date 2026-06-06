@@ -8,7 +8,7 @@
     "path": "/risk",
     "position": "after:sessions"
   },
-  "entry": "dist/index.js?v=0.1.5",
-  "css": "dist/style.css?v=0.1.1",
+  "entry": "dist/index.js?v=0.1.6",
+  "css": "dist/style.css?v=0.1.6",
   "api": "plugin_api.py"
 }

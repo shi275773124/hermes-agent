@@ -53,22 +53,54 @@
   }
 
   function BotRow({ bot }) {
-    return h("div", { className: "tr-row" },
-      h("div", { className: "tr-row-main" },
-        h("div", { className: "tr-row-title" }, bot.name || "Unnamed bot"),
-        h("div", { className: "tr-row-sub" }, [bot.platform, bot.strategy].filter(Boolean).join(" · ")),
-        bot.notes ? h("div", { className: "tr-row-note" }, bot.notes) : null
+    const d = bot.details || {};
+    const legs = d.current_positions || [];
+    const orders = d.open_orders || [];
+    const metrics = d.metrics || {};
+    return h("div", { className: "tr-row tr-bot-detail" },
+      h("div", { className: "tr-row-top" },
+        h("div", { className: "tr-row-main" },
+          h("div", { className: "tr-row-title" }, bot.name || "Unnamed bot"),
+          h("div", { className: "tr-row-sub" }, [bot.platform, bot.strategy].filter(Boolean).join(" · ")),
+          bot.notes ? h("div", { className: "tr-row-note" }, bot.notes) : null
+        ),
+        h("div", { className: "tr-row-meta" },
+          label(bot.authority || "UNKNOWN", bot.authority),
+          label(bot.state || "UNKNOWN", bot.state),
+          h("div", { className: "tr-mini" }, "gross: $" + fmt(bot.gross_usd)),
+          h("div", { className: "tr-mini" }, "equity: " + fmt(bot.account_equity)),
+          h("div", { className: "tr-mini" }, "PnL: " + fmt(bot.pnl_unrealized_usd ?? bot.pnl_daily_pct)),
+          h("div", { className: "tr-mini" }, "legs: " + (bot.positions_count ?? "—")),
+          h("div", { className: "tr-mini" }, "match: " + boolText(bot.position_match)),
+          h("div", { className: "tr-mini" }, "stop: " + boolText(bot.stop_coverage))
+        )
       ),
-      h("div", { className: "tr-row-meta" },
-        label(bot.authority || "UNKNOWN", bot.authority),
-        label(bot.state || "UNKNOWN", bot.state),
-        h("div", { className: "tr-mini" }, "signal: " + (bot.last_signal || "—")),
-        h("div", { className: "tr-mini" }, "order: " + (bot.last_order || "—")),
-        h("div", { className: "tr-mini" }, "fill: " + (bot.last_fill || "—")),
-        h("div", { className: "tr-mini" }, "match: " + boolText(bot.position_match)),
-        h("div", { className: "tr-mini" }, "stop: " + boolText(bot.stop_coverage))
-      )
+      d.strategy_summary ? h("div", { className: "tr-detail-line" }, h("b", null, "Strategy / 策略："), d.strategy_summary) : null,
+      d.stop_condition ? h("div", { className: "tr-detail-line" }, h("b", null, "Stop condition / 停机条件："), d.stop_condition) : null,
+      h("div", { className: "tr-detail-line" }, h("b", null, "Source / 数据源："), (d.data_source || "—") + " · verified: " + (d.last_verified || "—")),
+      legs.length ? h("div", { className: "tr-leg-wrap" },
+        h("div", { className: "tr-leg-title" }, "Positions / 当前仓位"),
+        h("div", { className: "tr-leg-grid tr-leg-head" }, ["symbol", "side", "size", "entry", "notional", "PnL", "liq", "stop"].map(x => h("span", { key: x }, x))),
+        legs.map((leg, i) => h("div", { className: "tr-leg-grid", key: i },
+          h("span", null, leg.symbol || "—"),
+          h("span", null, leg.side || "—"),
+          h("span", null, fmt(leg.size)),
+          h("span", null, fmt(leg.entry)),
+          h("span", null, fmt(leg.notional_usd)),
+          h("span", null, fmt(leg.unrealized_pnl)),
+          h("span", null, fmt(leg.liq_price)),
+          h("span", null, leg.stop_price || (leg.stop_expected ? "expected" : "—"))
+        ))
+      ) : h("div", { className: "tr-muted" }, "No leg-level position artifact yet / 暂无腿级仓位 artifact"),
+      orders.length ? h("div", { className: "tr-detail-line" }, h("b", null, "Open orders / 挂单："), orders.map(o => [o.symbol, o.type, o.side, o.stop_price, o.reduce_only ? "reduce-only" : ""].filter(Boolean).join(" · ")).join(" | ")) : null,
+      Object.keys(metrics).length ? h("div", { className: "tr-detail-line tr-metrics-line" }, h("b", null, "Metrics / 指标："), Object.entries(metrics).filter(([,v]) => v !== null && v !== undefined).map(([k,v]) => k + "=" + fmt(v)).join(" · ")) : null
     );
+  }
+
+  function fmt(x) {
+    if (x === null || x === undefined || x === "") return "—";
+    if (typeof x === "number") return Math.abs(x) >= 100 ? x.toFixed(2) : String(Math.round(x * 10000) / 10000);
+    return String(x);
   }
 
   function boolText(value) {
