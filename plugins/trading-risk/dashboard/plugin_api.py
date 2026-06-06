@@ -192,6 +192,23 @@ def _merge_real_artifacts(base: dict[str, Any]) -> dict[str, Any]:
         if isinstance(venues, list):
             base["venues"] = venues
 
+    portfolio = artifacts.get("portfolio_exposure")
+    if isinstance(portfolio, dict):
+        metrics = portfolio.get("metrics")
+        if isinstance(metrics, dict):
+            base["metrics"].update(metrics)
+        events = portfolio.get("events")
+        if isinstance(events, list):
+            base["events"] = events
+
+    if isinstance(execution, dict):
+        metrics = execution.get("metrics")
+        if isinstance(metrics, dict):
+            base["metrics"].update(metrics)
+        events = execution.get("events")
+        if isinstance(events, list):
+            base["events"] = events
+
     return base
 
 

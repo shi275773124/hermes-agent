@@ -103,10 +103,20 @@
     );
   }
 
+  function authorityLabel(it) {
+    if (!it || typeof it !== "object") return String(it);
+    const parts = [];
+    if (it.name) parts.push(it.name);
+    if (it.permission) parts.push(it.permission);
+    if (it.bot) parts.push(it.bot);
+    if (it.type) parts.push(it.type);
+    return parts.join(" · ") || JSON.stringify(it);
+  }
+
   function authorityList(title, items, dot) {
     return h("div", { className: "tr-authority" },
       h("h3", null, h("span", { className: "tr-dot " + dot }), title),
-      items.length ? h("ul", null, items.map((it, i) => h("li", { key: i }, String(it)))) : h("p", { className: "tr-muted" }, "none")
+      items.length ? h("ul", null, items.map((it, i) => h("li", { key: i }, authorityLabel(it)))) : h("p", { className: "tr-muted" }, "none")
     );
   }
 
