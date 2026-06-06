@@ -185,6 +185,9 @@ def _merge_real_artifacts(base: dict[str, Any]) -> dict[str, Any]:
         bots = execution.get("bots")
         if isinstance(bots, list):
             base["bots"] = bots
+        other = execution.get("other_active_automation")
+        if isinstance(other, list):
+            base["other_active_automation"] = other
 
     counterparty = artifacts.get("counterparty_score")
     if isinstance(counterparty, dict):

@@ -156,6 +156,25 @@
     );
   }
 
+  function OtherAutomation({ items }) {
+    items = items || [];
+    if (!items.length) return null;
+    return h(Card, null,
+      h(SectionTitle, { title: "Other Active Automation / 其他正在跑的自动化", subtitle: "Not counted as current real-money bots unless Obsidian says live authority + live positions. / 不等于真钱机器人，除非 Obsidian 明确有真钱权限和仓位。" }),
+      h("div", { className: "tr-list" }, items.map((it, i) => h("div", { className: "tr-row", key: it.name || i },
+        h("div", { className: "tr-row-main" },
+          h("div", { className: "tr-row-title" }, it.name || "Automation"),
+          h("div", { className: "tr-row-sub" }, [it.platform, it.category, it.source].filter(Boolean).join(" · "))
+        ),
+        h("div", { className: "tr-row-meta" },
+          label(it.state || "UNKNOWN", it.state && it.state.indexOf("ERROR") === 0 ? "DEGRADED" : "WATCH"),
+          label(it.authority || "UNKNOWN", it.authority),
+          h("div", { className: "tr-mini" }, "counted real money: " + boolText(!!it.counted_real_money))
+        )
+      )))
+    );
+  }
+
   function RiskDashboard() {
     const [data, setData] = hooks.useState(null);
     const [err, setErr] = hooks.useState(null);
@@ -223,6 +242,8 @@
         h(SectionTitle, { title: "Money Bots / 真钱机器人", subtitle: "Execution-chain status. Process-alive is not enough. / 看执行链状态，进程活着不等于健康。" }),
         h("div", { className: "tr-list" }, bots.map((bot, i) => h(BotRow, { bot: bot, key: bot.name || i })))
       ),
+
+      h(OtherAutomation, { items: data.other_active_automation }),
 
       h("div", { className: "tr-venues-grid" }, venues.map((venue, i) => h(VenueCard, { venue: venue, key: venue.name || i }))),
       h(AuthorityMap, { authority: data.authority_map || {} }),
