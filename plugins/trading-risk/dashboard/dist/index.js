@@ -94,11 +94,11 @@
     const watch = authority && authority.watchdog_only ? authority.watchdog_only : [];
     const unknown = authority && authority.unknown_live_writers ? authority.unknown_live_writers : [];
     return h(Card, null,
-      h(SectionTitle, { title: "Authority Map", subtitle: "Who can write live state. Read-only view." }),
+      h(SectionTitle, { title: "Authority Map / 权力图", subtitle: "Who can write live state. Read-only view. / 谁能写入实盘状态，只读展示。" }),
       h("div", { className: "tr-authority-grid" },
-        authorityList("Can place orders", can, "tr-dot-red"),
-        authorityList("Watchdog only", watch, "tr-dot-blue"),
-        authorityList("Unknown live writers", unknown, unknown.length ? "tr-dot-red" : "tr-dot-green")
+        authorityList("Can place orders / 可下单权力源", can, "tr-dot-red"),
+        authorityList("Watchdog only / 仅监控", watch, "tr-dot-blue"),
+        authorityList("Unknown live writers / 未知实盘写入源", unknown, unknown.length ? "tr-dot-red" : "tr-dot-green")
       )
     );
   }
@@ -122,7 +122,7 @@
 
   function Events({ events }) {
     return h(Card, null,
-      h(SectionTitle, { title: "Risk Event Stream", subtitle: "Recent state reasons, not raw noisy tracebacks." }),
+      h(SectionTitle, { title: "Risk Event Stream / 风险事件流", subtitle: "Recent state reasons, not raw noisy tracebacks. / 只显示状态原因，不喷原始噪音 traceback。" }),
       h("div", { className: "tr-events" }, (events || []).map((ev, i) =>
         h("div", { className: "tr-event", key: i },
           label(ev.level || "INFO", ev.level),
@@ -145,7 +145,7 @@
   function Artifacts({ artifacts }) {
     if (!artifacts) return null;
     return h(Card, null,
-      h(SectionTitle, { title: "Data Artifacts", subtitle: "Dashboard reads these JSON files; missing means demo fallback." }),
+      h(SectionTitle, { title: "Data Artifacts / 数据工件", subtitle: "Dashboard reads these JSON files; missing means demo fallback. / 看板读取这些 JSON；缺失则回退演示数据。" }),
       h("div", { className: "tr-artifacts" }, Object.keys(artifacts).map((name) => {
         const a = artifacts[name];
         return h("div", { className: "tr-artifact", key: name },
@@ -191,9 +191,9 @@
     return h("div", { className: "tr-page" },
       h("header", { className: "tr-hero" },
         h("div", null,
-          h("p", { className: "tr-eyebrow" }, "TRADING RISK CONSOLE · READ ONLY"),
-          h("h1", null, "Risk Dashboard"),
-          h("p", { className: "tr-hero-sub" }, summary.reason || "Unified bot, venue, authority, and execution state.")
+          h("p", { className: "tr-eyebrow" }, "TRADING RISK CONSOLE · READ ONLY / 交易风控中枢 · 只读"),
+          h("h1", null, "Risk Dashboard / 风控看板"),
+          h("p", { className: "tr-hero-sub" }, summary.reason || "Unified bot, venue, authority, and execution state. / 统一展示机器人、平台、权力源与执行链状态。")
         ),
         h("div", { className: "tr-hero-state" },
           label(summary.state || data.global_state || "UNKNOWN", summary.state || data.global_state),
@@ -204,15 +204,15 @@
       ),
 
       h("div", { className: "tr-metrics-grid" },
-        h(Metric, { label: "Global State", value: summary.state || data.global_state || "UNKNOWN", hint: "NORMAL → CAUTION → DE_RISK → PAUSE_ENTRY → CLOSE_ONLY" }),
-        h(Metric, { label: "Live Writers", value: String(metrics.live_writers ?? "—"), hint: "registered order-capable processes" }),
-        h(Metric, { label: "Venues", value: String(metrics.venues ?? venues.length), hint: "platform / counterparty view" }),
-        h(Metric, { label: "Open Positions", value: String(metrics.open_positions ?? "—"), hint: "from private-read or ledger" }),
-        h(Metric, { label: "Alerts 24h", value: String(metrics.alerts_24h ?? "—"), hint: "deduped, not raw traceback spam" })
+        h(Metric, { label: "Global State / 全局状态", value: summary.state || data.global_state || "UNKNOWN", hint: "NORMAL → CAUTION → DE_RISK → PAUSE_ENTRY → CLOSE_ONLY" }),
+        h(Metric, { label: "Live Writers / 实盘写入源", value: String(metrics.live_writers ?? "—"), hint: "registered order-capable processes / 已登记可下单进程" }),
+        h(Metric, { label: "Venues / 平台", value: String(metrics.venues ?? venues.length), hint: "platform / counterparty view / 平台与交易对手视图" }),
+        h(Metric, { label: "Open Positions / 持仓数", value: String(metrics.open_positions ?? "—"), hint: "from private-read or ledger / 来自只读私有接口或 ledger" }),
+        h(Metric, { label: "Alerts 24h / 24h 告警", value: String(metrics.alerts_24h ?? 0), hint: "deduped, not raw traceback spam / 去重后告警，不算 traceback 噪音" })
       ),
 
       h(Card, null,
-        h(SectionTitle, { title: "Allowed / Blocked Actions", subtitle: "v0 only displays policy; it does not execute anything." }),
+        h(SectionTitle, { title: "Allowed / Blocked Actions / 允许与禁止动作", subtitle: "v0 only displays policy; it does not execute anything. / v0 只展示策略，不执行任何交易动作。" }),
         h("div", { className: "tr-policy" },
           h("div", null, h("h3", null, "Allowed"), h("ul", null, (summary.allowed_actions || []).map((x, i) => h("li", { key: i }, x)))),
           h("div", null, h("h3", null, "Blocked"), h("ul", null, (summary.blocked_actions || []).map((x, i) => h("li", { key: i }, x))))
@@ -220,7 +220,7 @@
       ),
 
       h(Card, null,
-        h(SectionTitle, { title: "Money Bots", subtitle: "Execution-chain status. Process-alive is not enough." }),
+        h(SectionTitle, { title: "Money Bots / 真钱机器人", subtitle: "Execution-chain status. Process-alive is not enough. / 看执行链状态，进程活着不等于健康。" }),
         h("div", { className: "tr-list" }, bots.map((bot, i) => h(BotRow, { bot: bot, key: bot.name || i })))
       ),
 
